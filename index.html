@@ -568,6 +568,16 @@
       color: var(--accent);
     }
 
+    .chart-block {
+      margin-top: 10px;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      width: 100%;
+      height: 180px;
+    }
+
     .footer-note {
       font-size: 10px;
       color: var(--muted);
@@ -989,8 +999,19 @@
           </div>
         </div>
 
+        <!-- WEIGHT CURVE CHART -->
+        <div class="chart-block">
+          <div class="section-label">٦ · منحنى نزول الوزن · Weight Loss Curve</div>
+          <p class="card-subtitle" id="chartSubtitle">
+            سيظهر المخطط بعد إدخال وزنك الحالي والوزن المستهدف وحساب الخطة.
+          </p>
+          <div class="chart-wrapper">
+            <canvas id="weightChart"></canvas>
+          </div>
+        </div>
+
         <div style="margin-top: 8px;">
-          <div class="section-label">٦ · ملامح الخطة اليومية · Daily Plan Snapshot</div>
+          <div class="section-label">٧ · ملامح الخطة اليومية · Daily Plan Snapshot</div>
           <ul class="plan-list" id="dailyPlanList">
             <li>
               سيتم اقتراح توزيع عام للوجبات (وجبات رئيسية + سناك) بعد إدخال بياناتك.
@@ -1006,6 +1027,9 @@
       </section>
     </main>
   </div>
+
+  <!-- مكتبة الرسم البياني -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -1130,6 +1154,99 @@
       const carbInfoEl = document.getElementById("carbInfo");
       const dailyPlanListEl = document.getElementById("dailyPlanList");
 
+      const chartSubtitle = document.getElementById("chartSubtitle");
+      const weightChartCanvas = document.getElementById("weightChart");
+      let weightChart = null;
+
+      function updateWeightChart(currentWeight, targetWeight, weeks) {
+        if (!targetWeight || targetWeight >= currentWeight || weeks <= 0) {
+          chartSubtitle.textContent =
+            "أدخل وزنًا مستهدفًا أقل من وزنك الحالي لحساب منحنى نزول الوزن.";
+          if (weightChart) {
+            weightChart.destroy();
+            weightChart = null;
+          }
+          return;
+        }
+
+        const maxPoints = 20;
+        const steps = Math.min(Math.max(2, Math.ceil(weeks)), maxPoints - 1);
+        const stepSize = weeks / steps;
+
+        const labels = [];
+        const data = [];
+
+        for (let i = 0; i <= steps; i++) {
+          const w = currentWeight - (currentWeight - targetWeight) * (i / steps);
+          const weekNumber = (stepSize * i).toFixed(1);
+          labels.push(i === 0 ? "الآن · Now" : `أسبوع ${weekNumber}`);
+          data.push(parseFloat(w.toFixed(1)));
+        }
+
+        const ctx = weightChartCanvas.getContext("2d");
+        if (weightChart) {
+          weightChart.destroy();
+        }
+
+        weightChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "مسار الوزن (كجم) · Weight (kg)",
+                data,
+                tension: 0.35,
+                borderWidth: 2,
+                borderColor: "#22c55e",
+                backgroundColor: "rgba(34, 197, 94, 0.15)",
+                pointRadius: 3,
+                pointHoverRadius: 4,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                ticks: {
+                  maxRotation: 0,
+                  font: { size: 9 },
+                },
+                grid: {
+                  display: false,
+                },
+              },
+              y: {
+                ticks: {
+                  font: { size: 9 },
+                },
+                beginAtZero: false,
+                grid: {
+                  color: "rgba(148, 163, 184, 0.25)",
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                display: false,
+              },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) =>
+                    `الوزن: ${ctx.parsed.y} كجم · Week: ${ctx.label}`,
+                },
+              },
+            },
+          },
+        });
+
+        chartSubtitle.textContent =
+          "المنحنى يوضح مسار نزول الوزن من وزنك الحالي إلى الوزن المستهدف بالأسابيع.";
+      }
+
       plannerForm.addEventListener("submit", (e) => {
         e.preventDefault();
 
@@ -1189,9 +1306,10 @@
             : "0 كجم/أسبوع";
 
         // Time to goal
+        let weeks = 0;
         if (targetWeight && targetWeight < weight && realWeeklyLossKg > 0) {
           const kilosToLose = weight - targetWeight;
-          const weeks = kilosToLose / realWeeklyLossKg;
+          weeks = kilosToLose / realWeeklyLossKg;
           const weeksRounded = weeks.toFixed(1);
           const months = (weeks / 4.3).toFixed(1);
           timeToGoalEl.textContent =
@@ -1203,6 +1321,13 @@
         } else {
           timeToGoalEl.textContent =
             "أضف وزنًا مستهدفًا للحصول على تقدير لمدة الوصول للهدف.";
+        }
+
+        // تحديث منحنى نزول الوزن
+        if (weeks > 0) {
+          updateWeightChart(weight, targetWeight, weeks);
+        } else {
+          updateWeightChart(weight, NaN, 0);
         }
 
         // Plan style
