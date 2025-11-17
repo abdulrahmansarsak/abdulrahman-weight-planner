@@ -581,16 +581,421 @@
     .footer-note {
       font-size: 10px;
       color: var(--muted);
-@@ -617,7 +627,7 @@
+      text-align: center;
+      margin-top: 6px;
+      line-height: 1.6;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        padding: 0;
+      }
+      .app-shell {
+        box-shadow: none;
+        border-radius: 0;
+        max-width: 100%;
+      }
+      .controls {
+        display: none;
+      }
+      .btn-primary,
+      .btn-small {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="title-block">
+        <div class="brand">
+          <div class="brand-logo">
+            <!-- ضع هنا شعارك باسم as-logo.png في نفس المجلد -->
+            <img src="as-logo.png" alt="Abdulrahman Sarsak Logo" />
+          </div>
+          <div class="brand-text">
+            <div class="brand-name">Abdulrahman Sarsak</div>
+            <div class="brand-role">Coaching · Performance · Lifestyle</div>
+          </div>
+        </div>
+
+        <div class="badge">
+          <span class="badge-dot"></span>
+          <span>برنامج نزول وزن ذكي · Smart Fat Loss Engine</span>
         </div>
 
         <div class="app-title">
           <span>مخطِّط نزول الوزن الاحترافي</span>
-          <span>مخطِّط نزول الوزن الاحترافي</span>
           <span class="en">· Professional Weight Loss Planner</span>
         </div>
         <p class="subtitle">
-@@ -989,8 +999,19 @@
+          أدخل بياناتك بدقة، والتزم بالخطة، وستحصل على
+          <strong>مسار آمن وواقعي</strong> لنزول الوزن مع الحفاظ على الكتلة العضلية.
+        </p>
+      </div>
+
+      <div class="controls">
+        <div class="toggle" id="themeToggle" aria-label="Toggle theme">
+          <span class="active" data-theme-btn="dark">
+            <span class="dot"></span> 🌙 داكن Dark
+          </span>
+          <span data-theme-btn="light"> ☀️ فاتح Light </span>
+        </div>
+        <div class="pill">
+          🌍 الواجهة ثنائية اللغة: العربية + English UI
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <!-- LEFT: INPUT FORM -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <div class="section-label">١ · البيانات الأساسية · Basics</div>
+            <div class="card-title">معلوماتك الأساسية وهدفك · Your Profile & Goal</div>
+          </div>
+        </div>
+
+        <form id="plannerForm">
+          <div class="form-grid">
+            <div class="field">
+              <label>
+                <span>العمر (سنة)</span>
+                <span class="en">Age (years)</span>
+              </label>
+              <input
+                type="number"
+                id="age"
+                min="15"
+                max="80"
+                placeholder="مثال: 35"
+                required
+              />
+            </div>
+
+            <div class="field">
+              <label>
+                <span>الجنس</span>
+                <span class="en">Sex</span>
+              </label>
+              <select id="sex" required>
+                <option value="male">ذكر · Male</option>
+                <option value="female">أنثى · Female</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>
+                <span>الطول (سم)</span>
+                <span class="en">Height (cm)</span>
+              </label>
+              <input
+                type="number"
+                id="height"
+                min="120"
+                max="220"
+                placeholder="مثال: 175"
+                required
+              />
+            </div>
+
+            <div class="field">
+              <label>
+                <span>الوزن الحالي (كجم)</span>
+                <span class="en">Current Weight (kg)</span>
+              </label>
+              <input
+                type="number"
+                id="weight"
+                min="40"
+                max="250"
+                step="0.1"
+                placeholder="مثال: 90.5"
+                required
+              />
+            </div>
+
+            <div class="field">
+              <label>
+                <span>مستوى النشاط اليومي</span>
+                <span class="en">Daily Activity Level</span>
+              </label>
+              <select id="activity" required>
+                <option value="1.2">
+                  منخفض جدًا · Sedentary (مكتب / لا تمرين)
+                </option>
+                <option value="1.375">
+                  خفيف · Light (تمرين خفيف 1–3 أيام)
+                </option>
+                <option value="1.55">
+                  متوسط · Moderate (3–5 أيام تمرين)
+                </option>
+                <option value="1.725">
+                  عالي · High (تمرين قوي 6 أيام)
+                </option>
+                <option value="1.9">
+                  عالي جدًا · Athlete (مرتان يوميًا تقريبًا)
+                </option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>
+                <span>الوزن المستهدف (اختياري)</span>
+                <span class="en">Target Weight (optional)</span>
+              </label>
+              <input
+                type="number"
+                id="targetWeight"
+                min="40"
+                max="250"
+                step="0.1"
+                placeholder="مثال: 80 (اتركه فارغًا إن لم يكن محددًا)"
+              />
+            </div>
+          </div>
+
+          <div class="card-header" style="margin-top: 10px;">
+            <div>
+              <div class="section-label">٢ · الهدف ووتيرة النزول · Goal & Pace</div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>
+              <span>سرعة نزول الوزن المفضلة</span>
+              <span class="en">Preferred Weekly Fat Loss Pace</span>
+            </label>
+            <div class="radio-row" id="paceRow">
+              <button type="button" class="chip active" data-pace="0.5">
+                <span class="dot"></span>
+                هادئ · Gentle (≈ 0.5 كجم/أسبوع)
+              </button>
+              <button type="button" class="chip" data-pace="0.75">
+                <span class="dot"></span>
+                متوازن · Balanced (≈ 0.75 كجم/أسبوع)
+              </button>
+              <button type="button" class="chip" data-pace="1">
+                <span class="dot"></span>
+                سريع بحذر · Aggressive (≈ 1 كجم/أسبوع)
+              </button>
+            </div>
+          </div>
+
+          <div class="form-grid" style="margin-top: 6px;">
+            <div class="field">
+              <label>
+                <span>عدد الوجبات/اليوم</span>
+                <span class="en">Meals per Day</span>
+              </label>
+              <select id="meals">
+                <option value="3">3 وجبات رئيسية · 3 main meals</option>
+                <option value="4">3 + سناك · 3 + snack</option>
+                <option value="5">وجبات صغيرة متعددة · Small frequent meals</option>
+                <option value="2">2 وجبات · 2 meals</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>
+                <span>متوسط النوم (ساعة)</span>
+                <span class="en">Average Sleep (hours)</span>
+              </label>
+              <input
+                type="number"
+                id="sleep"
+                min="3"
+                max="12"
+                step="0.5"
+                placeholder="مثال: 7"
+              />
+            </div>
+
+            <div class="field">
+              <label>
+                <span>نسبة التوتر</span>
+                <span class="en">Stress Level</span>
+              </label>
+              <select id="stress">
+                <option value="low">منخفض · Low</option>
+                <option value="medium">متوسط · Medium</option>
+                <option value="high">مرتفع · High</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>
+                <span>نمط التغذية المفضل</span>
+                <span class="en">Preferred Diet Style</span>
+              </label>
+              <select id="dietStyle">
+                <option value="balanced">متوازن · Balanced</option>
+                <option value="highProtein">عالي البروتين · High Protein</option>
+                <option value="lowCarb">قليل الكربوهيدرات · Low Carb</option>
+                <option value="mediterranean">متوسطي · Mediterranean style</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary">
+            <span class="icon">📊</span>
+            <span>احسب الخطة الآن · Generate My Plan</span>
+          </button>
+
+          <p class="muted-note" style="margin-top: 6px;">
+            <span class="icon">⚕️</span>
+            <span>
+              هذا البرنامج للتوعية والتخطيط العام فقط،
+              <strong>ولا يغني عن استشارة طبيب أو أخصائي تغذية</strong> خصوصًا لمن يعاني من أمراض مزمنة
+              أو يتناول أدوية بانتظام.
+            </span>
+          </p>
+        </form>
+      </section>
+
+      <!-- RIGHT: RESULTS & EXERCISE -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <div class="section-label">٣ · خطة نزول الوزن · Fat Loss Plan</div>
+            <div class="card-title">نتائجك وخطتك التفصيلية · Your Numbers & Plan</div>
+            <p class="card-subtitle">
+              سيتم التحديث بعد إدخال بياناتك والضغط على "احسب الخطة الآن".
+            </p>
+          </div>
+          <button type="button" class="btn-small" id="printBtn">
+            🖨️ طباعة / حفظ كـ PDF
+          </button>
+        </div>
+
+        <div class="results-grid" style="margin-top: 6px;">
+          <div class="kpi-card">
+            <div class="kpi-label">BMR · معدل الأيض الأساسي</div>
+            <div class="kpi-value" id="bmrValue">— kcal</div>
+            <div class="kpi-subtext">
+              عدد السعرات التي يحرقها جسمك تقريبًا في الراحة التامة خلال 24 ساعة.
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-label">سعرات المحافظة · Maintenance Calories</div>
+            <div class="kpi-value" id="maintenanceCalories">— kcal</div>
+            <div class="kpi-subtext">
+              متوسط الحرق اليومي (متابوليزم يومي) مع مستوى نشاطك الحالي.
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-label">سعرات نزول الوزن · Fat Loss Calories</div>
+            <div class="kpi-value" id="cutCalories">— kcal</div>
+            <div class="kpi-subtext" id="cutNote">
+              يتم حسابها بعجز حراري آمن بحسب سرعة النزول التي اخترتها.
+            </div>
+            <div class="kpi-danger" id="safetyNote"></div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-label">سرعة النزول التقريبية · Estimated Weekly Loss</div>
+            <div class="kpi-value" id="weeklyLoss">— كجم/أسبوع</div>
+            <div class="kpi-subtext" id="timeToGoal">
+              مدة الوصول للهدف تظهر عند إدخال وزن مستهدف.
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-label">نمط الخطة · Plan Style</div>
+            <div class="kpi-value" id="planStyle">—</div>
+            <div class="kpi-subtext" id="planHints"></div>
+          </div>
+        </div>
+
+        <div style="margin-top: 10px;">
+          <div class="section-label">٤ · توزيع الماكروز · Macro Breakdown</div>
+          <div class="macro-grid">
+            <div class="macro-pill">
+              <div class="macro-label">البروتين · Protein</div>
+              <div class="macro-main" id="proteinInfo">— g (~— kcal)</div>
+            </div>
+            <div class="macro-pill">
+              <div class="macro-label">الدهون الصحية · Fats</div>
+              <div class="macro-main" id="fatInfo">— g (~— kcal)</div>
+            </div>
+            <div class="macro-pill">
+              <div class="macro-label">الكربوهيدرات · Carbs</div>
+              <div class="macro-main" id="carbInfo">— g (~— kcal)</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 10px;">
+          <div class="card-header" style="padding: 0; margin-bottom: 4px;">
+            <div>
+              <div class="section-label">٥ · التمارين وحرق السعرات · Training & Burn</div>
+              <div class="card-subtitle">
+                متوسط تقريبي لشخص ~70 كجم. قائمة التمارين مستلهمة من تمارين Apple Watch.
+              </div>
+            </div>
+          </div>
+
+          <table class="exercise-table">
+            <thead>
+              <tr>
+                <th>التمرين · Exercise</th>
+                <th>30 دقيقة · 30 min</th>
+                <th>60 دقيقة · 60 min</th>
+              </tr>
+            </thead>
+            <tbody id="exerciseTableBody"></tbody>
+          </table>
+
+          <div class="exercise-calc">
+            <div>حاسبة حرق السعرات بالتمرين · Workout Calories Calculator</div>
+            <div class="exercise-calc-row">
+              <div class="field">
+                <label>
+                  <span>نوع التمرين</span>
+                  <span class="en">Exercise Type</span>
+                </label>
+                <select id="exerciseSelect"></select>
+              </div>
+              <div class="field">
+                <label>
+                  <span>وزنك (كجم)</span>
+                  <span class="en">Your Weight (kg)</span>
+                </label>
+                <input
+                  type="number"
+                  id="exerciseWeight"
+                  min="40"
+                  max="250"
+                  step="0.1"
+                  placeholder="مثال: 90"
+                />
+              </div>
+              <div class="field">
+                <label>
+                  <span>المدة (دقيقة)</span>
+                  <span class="en">Duration (min)</span>
+                </label>
+                <input
+                  type="number"
+                  id="exerciseMinutes"
+                  min="5"
+                  max="180"
+                  step="5"
+                  placeholder="مثال: 45"
+                />
+              </div>
+            </div>
+            <button type="button" class="btn-small" id="exerciseCalcBtn">
+              🔥 احسب حرق التمرين · Calculate Burn
+            </button>
+            <div class="exercise-result" id="exerciseResult">
+              سيظهر هنا تقدير عدد السعرات التي تحرقها في التمرين المحدد.
+            </div>
           </div>
         </div>
 
@@ -606,12 +1011,20 @@
         </div>
 
         <div style="margin-top: 8px;">
-          <div class="section-label">٦ · ملامح الخطة اليومية · Daily Plan Snapshot</div>
           <div class="section-label">٧ · ملامح الخطة اليومية · Daily Plan Snapshot</div>
           <ul class="plan-list" id="dailyPlanList">
             <li>
               سيتم اقتراح توزيع عام للوجبات (وجبات رئيسية + سناك) بعد إدخال بياناتك.
-@@ -1007,6 +1028,9 @@
+            </li>
+          </ul>
+        </div>
+
+        <div class="footer-note">
+          إعداد: <strong>عبد الرحمن سرسك</strong><br />
+          Designed for education & self-tracking. For medical conditions,
+          consult your doctor or dietitian. · تم تصميمه للتوعية وليس للعلاج.
+        </div>
+      </section>
     </main>
   </div>
 
@@ -621,7 +1034,123 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const body = document.body;
-@@ -1130,6 +1154,99 @@
+      const themeToggle = document.getElementById("themeToggle");
+      const themeButtons = themeToggle.querySelectorAll("span[data-theme-btn]");
+
+      themeToggle.addEventListener("click", (e) => {
+        const btn = e.target.closest("span[data-theme-btn]");
+        if (!btn) return;
+        const theme = btn.getAttribute("data-theme-btn");
+        body.setAttribute("data-theme", theme);
+        themeButtons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+      });
+
+      const printBtn = document.getElementById("printBtn");
+      printBtn.addEventListener("click", () => {
+        window.print(); // من المتصفح اختر Save as PDF لحفظ الخطة
+      });
+
+      const paceRow = document.getElementById("paceRow");
+      let selectedPace = 0.5;
+      paceRow.addEventListener("click", (e) => {
+        const chip = e.target.closest(".chip");
+        if (!chip) return;
+        selectedPace = parseFloat(chip.getAttribute("data-pace"));
+        paceRow.querySelectorAll(".chip").forEach((c) =>
+          c.classList.remove("active")
+        );
+        chip.classList.add("active");
+      });
+
+      // Exercise database (approx kcal/hour at 70kg) – inspired by Apple Watch workouts
+      const exercises = [
+        { id: "walk_outdoor", name: "المشي في الهواء الطلق · Outdoor Walk", kcalPerHour70: 280 },
+        { id: "walk_indoor", name: "المشي على السير · Indoor Walk", kcalPerHour70: 260 },
+        { id: "run_outdoor", name: "الجري في الهواء الطلق · Outdoor Run", kcalPerHour70: 600 },
+        { id: "run_treadmill", name: "الجري على السير · Treadmill Run", kcalPerHour70: 560 },
+        { id: "cycle_outdoor", name: "الدراجة الخارجية · Outdoor Cycling", kcalPerHour70: 520 },
+        { id: "cycle_indoor", name: "الدراجة الثابتة · Indoor Cycling", kcalPerHour70: 500 },
+        { id: "hiit", name: "تمارين HIIT عالية الشدة", kcalPerHour70: 800 },
+        { id: "strength", name: "تمارين مقاومة/حديد · Strength Training", kcalPerHour70: 360 },
+        { id: "functional", name: "تمارين وظيفية · Functional Training", kcalPerHour70: 420 },
+        { id: "core", name: "تمارين الكور · Core Training", kcalPerHour70: 300 },
+        { id: "yoga", name: "يوغا · Yoga", kcalPerHour70: 210 },
+        { id: "pilates", name: "بيلاتس · Pilates", kcalPerHour70: 240 },
+        { id: "dance", name: "رقص عام · Dance", kcalPerHour70: 400 },
+        { id: "dance_fitness", name: "رقص رياضي · Dance Fitness", kcalPerHour70: 480 },
+        { id: "swim_pool", name: "سباحة في المسبح · Pool Swim", kcalPerHour70: 600 },
+        { id: "swim_open", name: "سباحة في مياه مفتوحة · Open Water Swim", kcalPerHour70: 660 },
+        { id: "row_indoor", name: "التجديف الداخلي · Indoor Rowing", kcalPerHour70: 520 },
+        { id: "elliptical", name: "جهاز إليبتكال · Elliptical", kcalPerHour70: 500 },
+        { id: "stair", name: "جهاز السلالم · Stair Climber", kcalPerHour70: 540 },
+        { id: "hike", name: "هايكنج · Hiking", kcalPerHour70: 480 },
+        { id: "steps", name: "المشي اليومي/الخطوات · Daily Steps (خفيف)", kcalPerHour70: 220 },
+      ];
+
+      const exerciseTableBody = document.getElementById("exerciseTableBody");
+      const exerciseSelect = document.getElementById("exerciseSelect");
+      const exerciseWeightInput = document.getElementById("exerciseWeight");
+      const exerciseMinutesInput = document.getElementById("exerciseMinutes");
+      const exerciseCalcBtn = document.getElementById("exerciseCalcBtn");
+      const exerciseResult = document.getElementById("exerciseResult");
+
+      function renderExerciseTable() {
+        exerciseTableBody.innerHTML = "";
+        exercises.forEach((ex) => {
+          const kcal30 = (ex.kcalPerHour70 / 2).toFixed(0);
+          const kcal60 = ex.kcalPerHour70.toFixed(0);
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${ex.name}</td>
+            <td>${kcal30} kcal</td>
+            <td>${kcal60} kcal</td>
+          `;
+          exerciseTableBody.appendChild(tr);
+        });
+
+        exerciseSelect.innerHTML = "";
+        exercises.forEach((ex) => {
+          const opt = document.createElement("option");
+          opt.value = ex.id;
+          opt.textContent = ex.name;
+          exerciseSelect.appendChild(opt);
+        });
+      }
+
+      renderExerciseTable();
+
+      exerciseCalcBtn.addEventListener("click", () => {
+        const exId = exerciseSelect.value;
+        const ex = exercises.find((e) => e.id === exId);
+        if (!ex) return;
+        const weight = parseFloat(exerciseWeightInput.value) || 70;
+        const minutes = parseFloat(exerciseMinutesInput.value) || 30;
+
+        const factor = weight / 70;
+        const kcalPerHour = ex.kcalPerHour70 * factor;
+        const kcal = (kcalPerHour * (minutes / 60)).toFixed(0);
+
+        exerciseResult.innerHTML =
+          `تقريبًا ستحرق <strong>${kcal} سعر حراري</strong> ` +
+          `من تمرين <strong>${ex.name}</strong> لمدة ${minutes} دقيقة بوزن ${weight} كجم.`;
+      });
+
+      // Main planner logic
+      const plannerForm = document.getElementById("plannerForm");
+
+      const bmrValueEl = document.getElementById("bmrValue");
+      const maintenanceCaloriesEl = document.getElementById("maintenanceCalories");
+      const cutCaloriesEl = document.getElementById("cutCalories");
+      const cutNoteEl = document.getElementById("cutNote");
+      const safetyNoteEl = document.getElementById("safetyNote");
+      const weeklyLossEl = document.getElementById("weeklyLoss");
+      const timeToGoalEl = document.getElementById("timeToGoal");
+      const planStyleEl = document.getElementById("planStyle");
+      const planHintsEl = document.getElementById("planHints");
+
+      const proteinInfoEl = document.getElementById("proteinInfo");
+      const fatInfoEl = document.getElementById("fatInfo");
       const carbInfoEl = document.getElementById("carbInfo");
       const dailyPlanListEl = document.getElementById("dailyPlanList");
 
@@ -721,19 +1250,76 @@
       plannerForm.addEventListener("submit", (e) => {
         e.preventDefault();
 
-@@ -1189,9 +1306,10 @@
+        const age = parseFloat(document.getElementById("age").value);
+        const sex = document.getElementById("sex").value;
+        const height = parseFloat(document.getElementById("height").value);
+        const weight = parseFloat(document.getElementById("weight").value);
+        const activity = parseFloat(document.getElementById("activity").value);
+        const targetWeight = parseFloat(document.getElementById("targetWeight").value);
+        const meals = document.getElementById("meals").value;
+        const sleep = parseFloat(document.getElementById("sleep").value || "0");
+        const stress = document.getElementById("stress").value;
+        const dietStyle = document.getElementById("dietStyle").value;
+
+        if (!age || !height || !weight || !activity) {
+          alert("يرجى التأكد من إدخال العمر والوزن والطول ومستوى النشاط.");
+          return;
+        }
+
+        // BMR (Mifflin-St Jeor)
+        let bmr;
+        if (sex === "male") {
+          bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+        } else {
+          bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+        }
+        const bmrRounded = Math.round(bmr);
+        bmrValueEl.textContent = `${bmrRounded} kcal`;
+
+        // Maintenance
+        const maintenance = Math.round(bmr * activity);
+        maintenanceCaloriesEl.textContent = `${maintenance} kcal`;
+
+        // Calorie deficit based on selected pace
+        // 1 كجم دهون ≈ 7700 kcal
+        const weeklyDeficit = selectedPace * 7700;
+        const dailyDeficit = weeklyDeficit / 7;
+        let cutCalories = Math.round(maintenance - dailyDeficit);
+
+        const minSafe = sex === "male" ? 1500 : 1200;
+        let safetyMsg = "";
+        if (cutCalories < minSafe) {
+          safetyMsg =
+            "تنبيه: السعرات المطلوبة لنزول الوزن أقل من الحد الآمن التقريبي. " +
+            "يفضّل إبطاء سرعة النزول أو استشارة أخصائي تغذية.";
+          cutCalories = minSafe;
+        }
+
+        cutCaloriesEl.textContent = `${cutCalories} kcal`;
+        safetyNoteEl.textContent = safetyMsg;
+
+        const realDailyDeficit = maintenance - cutCalories;
+        const realWeeklyLossKg = realDailyDeficit * 7 / 7700;
+        weeklyLossEl.textContent =
+          realWeeklyLossKg > 0
+            ? `${realWeeklyLossKg.toFixed(2)} كجم/أسبوع`
             : "0 كجم/أسبوع";
 
         // Time to goal
         let weeks = 0;
         if (targetWeight && targetWeight < weight && realWeeklyLossKg > 0) {
           const kilosToLose = weight - targetWeight;
-          const weeks = kilosToLose / realWeeklyLossKg;
           weeks = kilosToLose / realWeeklyLossKg;
           const weeksRounded = weeks.toFixed(1);
           const months = (weeks / 4.3).toFixed(1);
           timeToGoalEl.textContent =
-@@ -1205,6 +1323,13 @@
+            `مدة تقريبية للوصول للهدف: ${weeksRounded} أسبوع ` +
+            `(حوالي ${months} شهر) عند الالتزام الجيد.`;
+        } else if (targetWeight && targetWeight >= weight) {
+          timeToGoalEl.textContent =
+            "الوزن المستهدف أكبر أو يساوي وزنك الحالي، يرجى إدخال هدف أقل للوزن.";
+        } else {
+          timeToGoalEl.textContent =
             "أضف وزنًا مستهدفًا للحصول على تقدير لمدة الوصول للهدف.";
         }
 
@@ -747,3 +1333,123 @@
         // Plan style
         let planStyle = "";
         let planHint = "";
+        if (selectedPace <= 0.5) {
+          planStyle = "خطة هادئة محافظة · Conservative Gentle Plan";
+          planHint =
+            "مناسبة للمبتدئين ولمن يخشى خسارة الكتلة العضلية. التركيز على البروتين والتمارين المقاومة والمشي اليومي.";
+        } else if (selectedPace <= 0.8) {
+          planStyle = "خطة متوازنة · Balanced Plan";
+          planHint =
+            "توازن بين سرعة النزول والحفاظ على النشاط والطاقة. مناسبة لمن لديه خبرة متوسطة في الحمية والتمرين.";
+        } else {
+          planStyle = "خطة سريعة تحت المراقبة · Aggressive Monitored Plan";
+          planHint =
+            "تحتاج متابعة جيدة للنوم والصحة والحالة النفسية. حاول ألا تستمر على هذا النمط لأشهر طويلة دون إشراف متخصص.";
+        }
+
+        planStyleEl.textContent = planStyle;
+        planHintsEl.textContent = planHint;
+
+        // Macros
+        let proteinPerKg = 1.8;
+        if (dietStyle === "highProtein" || dietStyle === "lowCarb") {
+          proteinPerKg = 2.0;
+        }
+        const proteinGrams = Math.round(weight * proteinPerKg);
+        const proteinKcal = proteinGrams * 4;
+
+        const fatKcal = Math.round(cutCalories * 0.3);
+        const fatGrams = Math.round(fatKcal / 9);
+
+        let carbsKcal = cutCalories - proteinKcal - fatKcal;
+        if (carbsKcal < 50 * 4) {
+          carbsKcal = 50 * 4;
+        }
+        const carbGrams = Math.round(carbsKcal / 4);
+
+        proteinInfoEl.textContent = `${proteinGrams} g (~${proteinKcal} kcal)`;
+        fatInfoEl.textContent = `${fatGrams} g (~${fatKcal} kcal)`;
+        carbInfoEl.textContent = `${carbGrams} g (~${carbsKcal} kcal)`;
+
+        // Daily plan hints
+        const listItems = [];
+
+        // Meals
+        let mealsText = "";
+        if (meals === "3") {
+          mealsText =
+            "3 وجبات رئيسية متوازنة (فطور، غداء، عشاء) مع إمكانية سناك واحد خفيف عند الحاجة.";
+        } else if (meals === "4") {
+          mealsText =
+            "3 وجبات رئيسية + سناك من بروتين/خضار أو حفنة مكسرات غير مملحة.";
+        } else if (meals === "5") {
+          mealsText =
+            "وجبات صغيرة متكررة، كل 3 ساعات تقريبًا، مع توزيع البروتين على مدار اليوم.";
+        } else {
+          mealsText =
+            "وجبتان رئيسيتان كبيرتان نسبيًا، تأكد من احتواء كل وجبة على بروتين وخضار ودهون صحية.";
+        }
+        listItems.push(`<li><strong>الوجبات:</strong> ${mealsText}</li>`);
+
+        // Sleep
+        if (sleep > 0) {
+          if (sleep < 6) {
+            listItems.push(
+              "<li><strong>النوم:</strong> نومك أقل من 6 ساعات قد يبطئ نزول الوزن ويزيد الجوع. حاول الوصول إلى 7–8 ساعات إن أمكن.</li>"
+            );
+          } else if (sleep >= 6 && sleep <= 8) {
+            listItems.push(
+              "<li><strong>النوم:</strong> مستوى نوم جيد (6–8 ساعات) يدعم نزول الوزن والحفاظ على العضلات.</li>"
+            );
+          } else {
+            listItems.push(
+              "<li><strong>النوم:</strong> احرص أن يكون النوم بجودة جيدة ومنتظم التوقيت قدر الإمكان.</li>"
+            );
+          }
+        }
+
+        // Stress
+        if (stress === "high") {
+          listItems.push(
+            "<li><strong>التوتر:</strong> مستوى التوتر مرتفع؛ جرّب المشي اليومي الهادئ، تمارين التنفس، وتقليل المنبهات في آخر اليوم.</li>"
+          );
+        } else if (stress === "medium") {
+          listItems.push(
+            "<li><strong>التوتر:</strong> مستوى توتر متوسط؛ ابحث عن روتين ثابت للاسترخاء (قراءة، ذكر، جلسة هادئة قبل النوم).</li>"
+          );
+        } else {
+          listItems.push(
+            "<li><strong>التوتر:</strong> توتر منخفض، وهذا ممتاز لدعم نزول الوزن بشكل مستمر.</li>"
+          );
+        }
+
+        // Training suggestion
+        listItems.push(
+          "<li><strong>التمرين الأسبوعي المقترح:</strong> 3 أيام تمارين مقاومة/حديد (45–60 دقيقة) + 2–3 أيام مشي سريع أو جري خفيف 30–45 دقيقة + زيادة الحركة اليومية (الدرج، الوقوف، المشي داخل اليوم).</li>"
+        );
+
+        // Diet style
+        if (dietStyle === "lowCarb") {
+          listItems.push(
+            "<li><strong>نمط قليل الكربوهيدرات:</strong> ركّز على البروتين (لحم، دجاج، سمك، بيض)، الخضار الورقية، الدهون الصحية (زيت زيتون، أفوكادو، مكسرات)، واجعل الكربوهيدرات من مصادر نظيفة مثل الشوفان، الأرز البني، والبطاطا.</li>"
+          );
+        } else if (dietStyle === "highProtein") {
+          listItems.push(
+            "<li><strong>نمط عالي البروتين:</strong> اجعل في كل وجبة مصدر بروتين أساسي (120–180 جم من اللحم/الدجاج/السمك أو 3–4 بيضات مع البياض) مع خضار وألياف، وقلل السكريات البسيطة.</li>"
+          );
+        } else if (dietStyle === "mediterranean") {
+          listItems.push(
+            "<li><strong>النمط المتوسطي:</strong> استخدم زيت الزيتون كمصدر رئيسي للدهون، أكثر من الخضار والفواكه، الحبوب الكاملة، السمك مرتين أسبوعيًا على الأقل.</li>"
+          );
+        } else {
+          listItems.push(
+            "<li><strong>نمط متوازن:</strong> ثلث الطبق بروتين، ثلث خضار/سلطة، وثلث كربوهيدرات معقّدة (أرز، بطاطا، شوفان)، مع ملعقة دهون صحية.</li>"
+          );
+        }
+
+        dailyPlanListEl.innerHTML = listItems.join("");
+      });
+    });
+  </script>
+</body>
+</html>
