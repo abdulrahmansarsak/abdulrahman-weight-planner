@@ -1,509 +1,749 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>برنامج نزول الوزن | Abdulrahman Sarsak</title>
-
-<!-- ChartJS -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- jsPDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<style>
-/* ===========================
-   VARIABLES (THEME)
-=========================== */
-:root {
-  --bg: #0b1120;
-  --bg-elevated: #111827;
-  --text: #e5e7eb;
-  --muted: #9ca3af;
-  --accent: #22c55e;
-  --accent-soft: rgba(34,197,94,0.15);
-  --danger: #ef4444;
-  --border: #1f2937;
-}
-
-body[data-theme="light"] {
-  --bg: #f3f4f6;
-  --bg-elevated: #ffffff;
-  --text: #111827;
-  --muted: #6b7280;
-  --accent: #16a34a;
-  --accent-soft: rgba(16,163,74,0.1);
-  --border: #d1d5db;
-}
-
-/* ===========================
-   BASE STYLE
-=========================== */
-body {
-  background: var(--bg);
-  color: var(--text);
-  margin: 0;
-  padding: 20px;
-  font-family: system-ui;
-}
-
-.container {
-  max-width: 1100px;
-  margin: auto;
-  background: var(--bg-elevated);
-  padding: 20px;
-  border-radius: 16px;
-  border: 1px solid var(--border);
-}
-
-/* HEADER */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.logo img {
-  width: 65px;
-  height: 65px;
-  border-radius: 50%;
-  border: 2px solid var(--accent);
-}
-
-.toggle, .lang-toggle {
-  cursor: pointer;
-  padding: 8px 12px;
-  background: var(--accent-soft);
-  border-radius: 10px;
-  color: var(--accent);
-  font-size: 12px;
-}
-
-/* TITLES */
-.section-title {
-  margin-top: 22px;
-  font-size: 15px;
-  font-weight: bold;
-  color: var(--accent);
-  border-right: 4px solid var(--accent);
-  padding-right: 8px;
-}
-
-/* FORM GRID */
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2,1fr);
-  gap: 12px;
-}
-
-@media (max-width:700px){
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.field label {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.field input, .field select {
-  padding: 8px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text);
-}
-
-/* CHIPS */
-.radio-row {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.chip {
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  cursor: pointer;
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.chip.active {
-  background: var(--accent-soft);
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
-/* BUTTON */
-.btn {
-  padding: 12px;
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  border-radius: 12px;
-  width: 100%;
-  font-size: 14px;
-  margin-top: 12px;
-  cursor: pointer;
-}
-
-/* MACROS */
-.macro-grid {
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 10px;
-}
-
-.macro-pill {
-  padding: 12px;
-  border-radius: 12px;
-  background: var(--bg);
-  border: 1px dashed var(--border);
-  font-size: 12px;
-}
-
-/* CHART */
-.chart-box {
-  margin-top: 20px;
-  height: 240px;
-}
-
-/* EXERCISE TABLE */
-.exercise-table {
-  width: 100%;
-  font-size: 12px;
-  margin-top: 10px;
-}
-
-.exercise-table th {
-  color: var(--muted);
-}
-
-/* PDF BUTTON */
-.pdf-btn {
-  padding: 10px;
-  background: #0284c7;
-  color: #fff;
-  border-radius: 8px;
-  font-size: 12px;
-  cursor: pointer;
-  width: 150px;
-  margin-top: 12px;
-}
-</style>
-</head>
-
-<body data-theme="dark">
-
-<div class="container">
-
-  <!-- HEADER -->
-  <div class="header">
-    <div class="logo"><img src="as-logo.png"></div>
-
-    <div>
-      <span class="toggle" id="themeToggle">🌙 / ☀️</span>
-      &nbsp;
-      <span class="lang-toggle" id="langToggle">AR / EN</span>
-    </div>
-  </div>
-
-  <h2 style="margin-top:10px;">برنامج نزول الوزن المتقدم · Abdulrahman Sarsak</h2>
-
-
-  <!-- BASIC INFO -->
-  <div class="section-title">١) المعلومات الأساسية</div>
-
-  <div class="form-grid">
-    <div class="field">
-      <label>العمر / Age</label>
-      <input id="age">
-    </div>
-
-    <div class="field">
-      <label>الجنس / Sex</label>
-      <select id="sex">
-        <option value="male">ذكر</option>
-        <option value="female">أنثى</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label>الطول (سم)</label>
-      <input id="height">
-    </div>
-
-    <div class="field">
-      <label>الوزن الحالي (كجم)</label>
-      <input id="weight">
-    </div>
-
-    <div class="field">
-      <label>مستوى النشاط</label>
-      <select id="activity">
-        <option value="1.2">منخفض</option>
-        <option value="1.375">خفيف</option>
-        <option value="1.55">متوسط</option>
-        <option value="1.725">عالٍ</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label>الوزن المستهدف (اختياري)</label>
-      <input id="targetWeight">
-    </div>
-  </div>
-
-
-  <!-- PACE -->
-  <div class="section-title">٢) سرعة النزول</div>
-
-  <div class="radio-row" id="paceRow">
-    <div class="chip active" data-pace="0.5">0.5 كجم/أسبوع</div>
-    <div class="chip" data-pace="1">1 كجم/أسبوع</div>
-    <div class="chip" data-pace="2.5" style="border-color:#ef4444;color:#ef4444;">🔥 Super Aggressive (2–3 kg/week)</div>
-  </div>
-
-
-  <!-- AVERAGE DAILY INTAKE -->
-  <div class="section-title">٣) متوسط مدخول السعرات اليومي</div>
-
-  <div class="field">
-    <label>Average Daily Intake</label>
-    <input id="avgIntake" placeholder="مثال: 2300">
-  </div>
-
-
-  <button class="btn" id="calcBtn">احسب الخطة الآن</button>
-
-
-
-
-  <!-- RESULTS -->
-  <div class="section-title">٤) النتائج</div>
-  <div id="resultsArea"></div>
-
-
-  <!-- MACROS -->
-  <div class="section-title">٥) الماكروز</div>
-  <div class="macro-grid">
-    <div class="macro-pill" id="proteinInfo">—</div>
-    <div class="macro-pill" id="fatInfo">—</div>
-    <div class="macro-pill" id="carbInfo">—</div>
-  </div>
-
-
-  <!-- CHART -->
-  <div class="section-title">٦) منحنى نزول الوزن</div>
-  <div class="chart-box">
-    <canvas id="weightChart"></canvas>
-  </div>
-
-
-  <!-- EXERCISES -->
-  <div class="section-title">٧) التمارين وحرق السعرات</div>
-
-  <table class="exercise-table">
-    <thead>
-      <tr><th>التمرين</th><th>30 دقيقة</th><th>60 دقيقة</th></tr>
-    </thead>
-    <tbody id="exerciseTableBody"></tbody>
-  </table>
-
-  <div class="form-grid" style="margin-top:8px;">
-    <select id="exerciseSelect"></select>
-    <input id="exerciseWeight" placeholder="وزنك (كجم)">
-    <input id="exerciseMinutes" placeholder="المدة (دقيقة)">
-  </div>
-
-  <button class="btn" id="exerciseCalcBtn">🔥 احسب التمرين</button>
-  <p id="exerciseResult" style="color:var(--muted);font-size:13px;"></p>
-
-
-  <!-- PDF EXPORT -->
-  <button class="pdf-btn" id="pdfBtn">📄 تصدير PDF</button>
-
-</div>
-
-
-<script>
-/* ==============================
-   GLOBALS
-============================== */
-let weightChart;
-let lang = "ar";
-
-/* ==============================
-   THEME SWITCH
-============================== */
-document.getElementById("themeToggle").onclick = () => {
-  const current = document.body.getAttribute("data-theme");
-  document.body.setAttribute("data-theme", current === "dark" ? "light" : "dark");
-};
-
-
-/* ==============================
-   LANGUAGE SWITCH
-============================== */
-document.getElementById("langToggle").onclick = () => {
-  lang = (lang === "ar" ? "en" : "ar");
-  alert("💡 تم تفعيل اللغة: " + (lang === "ar" ? "العربية" : "English"));
-};
-
-
-
-/* ==============================
-   EXERCISES
-============================== */
-const exercises = [
-  {name:"المشي الخارجي", kcal:280},
-  {name:"المشي السير", kcal:260},
-  {name:"الجري", kcal:600},
-  {name:"دراجة", kcal:520},
-  {name:"HIIT", kcal:800},
-  {name:"مقاومة", kcal:360},
-  {name:"ملاكمة 🥊", kcal:780}
-];
-
-const exerciseTableBody = document.getElementById("exerciseTableBody");
-const exerciseSelect = document.getElementById("exerciseSelect");
-
-exercises.forEach(ex=>{
-  const tr = document.createElement("tr");
-  tr.innerHTML = `<td>${ex.name}</td><td>${(ex.kcal/2).toFixed(0)}</td><td>${ex.kcal}</td>`;
-  exerciseTableBody.appendChild(tr);
-
-  const opt = document.createElement("option");
-  opt.value = ex.kcal;
-  opt.textContent = ex.name;
-  exerciseSelect.appendChild(opt);
-});
-
-
-document.getElementById("exerciseCalcBtn").onclick = ()=>{
-  const kcal = parseFloat(exerciseSelect.value);
-  const weight = parseFloat(document.getElementById("exerciseWeight").value||70);
-  const minutes = parseFloat(document.getElementById("exerciseMinutes").value||30);
-
-  const burn = ((kcal*(weight/70))*(minutes/60)).toFixed(0);
-
-  document.getElementById("exerciseResult").innerHTML =
-    `تحرق تقريبًا <b>${burn}</b> سعرة حرارية`;
-};
-
-
-
-/* ==============================
-   CALCULATION
-============================== */
-document.getElementById("calcBtn").onclick = ()=>{
-
-  const age = parseFloat(age.value);
-  const h = parseFloat(height.value);
-  const w = parseFloat(weight.value);
-  const act = parseFloat(activity.value);
-  const sex = document.getElementById("sex").value;
-  const target = parseFloat(targetWeight.value);
-  const avgIntake = parseFloat(document.getElementById("avgIntake").value||0);
-
-  if(!age||!h||!w){
-    alert("يرجى إدخال البيانات الأساسية");
-    return;
-  }
-
-  /* BMR */
-  let bmr = (sex==="male") ? 10*w+6.25*h-5*age+5 : 10*w+6.25*h-5*age-161;
-  const maintenance = Math.round(bmr*act);
-
-  /* PACE */
-  const pace = parseFloat(document.querySelector(".chip.active").dataset.pace);
-  const dailyDef = (pace*7700)/7;
-  let cut = Math.round(maintenance-dailyDef);
-
-  /* SAFE */
-  if(sex==="male" && cut<1500) cut=1500;
-  if(sex==="female" && cut<1200) cut=1200;
-
-  /* IF USER ENTERED INTAKE */
-  let realDef = maintenance - cut;
-  if(avgIntake>0){
-    realDef = maintenance - avgIntake;
-    if(realDef<0) realDef=0;
-  }
-
-  const weeklyLoss = (realDef*7)/7700;
-
-  let weeks = 0;
-  if(target && target<w && weeklyLoss>0){
-    weeks = (w-target)/weeklyLoss;
-  }
-
-  /* RESULTS */
-  resultsArea.innerHTML = `
-    <div>BMR: ${Math.round(bmr)} kcal</div>
-    <div>سعرات المحافظة: ${maintenance}</div>
-    <div>سعرات الهدف: ${cut}</div>
-    <div>النزول الأسبوعي المتوقع: ${weeklyLoss.toFixed(2)} كجم</div>
-    ${weeks>0?`<div>مدة الوصول للهدف: ${weeks.toFixed(1)} أسبوع</div>`:""}
-  `;
-
-  /* MACROS */
-  const p = Math.round(w*1.8);
-  const f = Math.round((cut*0.3)/9);
-  let c = Math.round((cut-(p*4)-(f*9))/4);
-  if(c<30) c=30;
-
-  proteinInfo.innerHTML=`Protein: ${p}g`;
-  fatInfo.innerHTML=`Fat: ${f}g`;
-  carbInfo.innerHTML=`Carbs: ${c}g`;
-
-  /* CHART */
-  const ctx = document.getElementById("weightChart");
-
-  if(weightChart) weightChart.destroy();
-
-  if(target && weeks>0){
-    const labels=[], data=[];
-    for(let i=0;i<=weeks;i+=Math.max(1,weeks/12)){
-      labels.push("أسبوع "+i.toFixed(1));
-      data.push(w - ((w-target)*(i/weeks)));
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>مخطط نزول الوزن | Abdulrahman Sarsak</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --bg-elevated: #020617;
+      --bg-soft: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.15);
+      --danger: #f97373;
+      --border: #1f2937;
+      --card-radius: 18px;
+      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.45);
+      --input-bg: #020617;
+      --input-border: #1f2937;
     }
 
-    weightChart = new Chart(ctx,{
-      type:"line",
-      data:{
-        labels,
-        datasets:[{
-          data,
-          borderColor:"#22c55e",
-          backgroundColor:"rgba(34,197,94,0.2)",
-          fill:true,
-          tension:0.4
-        }]
-      },
-      options:{responsive:true,maintainAspectRatio:false}
-    });
-  }
-};
+    body[data-theme="light"] {
+      --bg: #f3f4f6;
+      --bg-elevated: #ffffff;
+      --bg-soft: #e5e7eb;
+      --text: #111827;
+      --muted: #6b7280;
+      --accent: #16a34a;
+      --accent-soft: rgba(22, 163, 74, 0.12);
+      --danger: #dc2626;
+      --border: #d1d5db;
+      --card-radius: 18px;
+      --shadow-soft: 0 18px 35px rgba(15, 23, 42, 0.12);
+      --input-bg: #ffffff;
+      --input-border: #d1d5db;
+    }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-/* ==============================
-   EXPORT TO PDF
-============================== */
-document.getElementById("pdfBtn").onclick = () => {
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF();
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, #1d283a 0, var(--bg) 45%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
 
-  pdf.text("Weight Loss Plan – Abdulrahman Sarsak", 10, 10);
-  pdf.text(document.getElementById("resultsArea").innerText, 10, 30);
+    .app-shell {
+      width: 100%;
+      max-width: 1100px;
+      background: linear-gradient(
+          145deg,
+          rgba(15, 23, 42, 0.95),
+          rgba(15, 23, 42, 0.85)
+        ),
+        var(--bg);
+      border-radius: 24px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      padding: 20px 18px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
 
-  pdf.save("Abdulrahman-FatLoss-Plan.pdf");
-};
+    body[data-theme="light"] .app-shell {
+      background: radial-gradient(circle at top left, #ffffff, #f3f4f6);
+    }
 
-</script>
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
 
-</body>
-</html>
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .brand-logo {
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(248, 250, 252, 0.35);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      background: #000;
+      flex-shrink: 0;
+    }
+
+    .brand-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-name {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .brand-role {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      width: fit-content;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.9);
+    }
+
+    .app-title {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: baseline;
+    }
+
+    .app-title span.en {
+      opacity: 0.75;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .subtitle strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 3px;
+      padding: 3px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg-soft);
+      cursor: pointer;
+      font-size: 11px;
+    }
+
+    .toggle span {
+      padding: 4px 9px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--muted);
+    }
+
+    .toggle span.active {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 7px 20px rgba(34, 197, 94, 0.6);
+    }
+
+    .toggle span .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+
+    .pill {
+      font-size: 11px;
+      color: var(--muted);
+      border-radius: 999px;
+      border: 1px dashed var(--border);
+      padding: 4px 9px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--bg-elevated);
+      border-radius: var(--card-radius);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      padding: 14px 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .card-subtitle {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .section-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 12px;
+    }
+
+    @media (max-width: 600px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field label {
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .field label span.en {
+      opacity: 0.8;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text);
+      padding: 8px 10px;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease,
+        background 0.15s ease;
+    }
+
+    .field input::placeholder {
+      color: rgba(148, 163, 184, 0.7);
+      font-size: 11px;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.6);
+    }
+
+    .radio-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 11px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: var(--bg-soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .chip.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .chip .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+
+    .btn-primary {
+      margin-top: 4px;
+      border: none;
+      border-radius: 14px;
+      padding: 9px 10px;
+      background: linear-gradient(135deg, #22c55e, #4ade80);
+      box-shadow: 0 16px 35px rgba(34, 197, 94, 0.6);
+      color: white;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .btn-primary span.icon {
+      font-size: 14px;
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+      box-shadow: 0 8px 18px rgba(34, 197, 94, 0.5);
+    }
+
+    .muted-note {
+      font-size: 10px;
+      color: var(--muted);
+      display: flex;
+      align-items: flex-start;
+      gap: 5px;
+      line-height: 1.5;
+    }
+
+    .muted-note strong {
+      color: var(--accent);
+    }
+
+    .muted-note span.icon {
+      font-size: 13px;
+      margin-top: 1px;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    @media (max-width: 600px) {
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .kpi-card {
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      background: radial-gradient(circle at top left, var(--accent-soft), transparent 65%);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-size: 12px;
+    }
+
+    .kpi-label {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .kpi-value {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .kpi-subtext {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .kpi-danger {
+      color: var(--danger);
+      font-size: 11px;
+    }
+
+    .macro-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .macro-pill {
+      border-radius: 999px;
+      border: 1px dashed var(--border);
+      padding: 5px 8px;
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .macro-label {
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .macro-main {
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .exercise-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 6px;
+      font-size: 11px;
+    }
+
+    .exercise-table th,
+    .exercise-table td {
+      padding: 5px 6px;
+      text-align: center;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .exercise-table th {
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 10px;
+    }
+
+    .exercise-table tbody tr:nth-child(even) {
+      background: rgba(15, 23, 42, 0.4);
+    }
+
+    body[data-theme="light"] .exercise-table tbody tr:nth-child(even) {
+      background: rgba(243, 244, 246, 0.9);
+    }
+
+    .exercise-calc {
+      margin-top: 6px;
+      border-radius: 12px;
+      border: 1px dashed var(--border);
+      padding: 7px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 11px;
+    }
+
+    .exercise-calc-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .exercise-calc-row .field {
+      flex: 1;
+      min-width: 90px;
+    }
+
+    .btn-small {
+      border-radius: 999px;
+      border: none;
+      padding: 5px 9px;
+      background: var(--accent);
+      color: white;
+      font-size: 11px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      margin-top: 3px;
+    }
+
+    .exercise-result {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .exercise-result strong {
+      color: var(--accent);
+    }
+
+    .plan-list {
+      font-size: 11px;
+      color: var(--muted);
+      padding-left: 14px;
+      padding-right: 14px;
+      padding-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .plan-list li {
+      margin-bottom: 2px;
+    }
+
+    .plan-list strong {
+      color: var(--accent);
+    }
+
+    .chart-block {
+      margin-top: 10px;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      width: 100%;
+      height: 180px;
+    }
+
+    .footer-note {
+      font-size: 10px;
+      color: var(--muted);
+@@ -617,7 +627,7 @@
+        </div>
+
+        <div class="app-title">
+          <span>مخطِّط نزول الوزن الاحترافي</span>
+          <span>مخطِّط نزول الوزن الاحترافي</span>
+          <span class="en">· Professional Weight Loss Planner</span>
+        </div>
+        <p class="subtitle">
+@@ -989,8 +999,19 @@
+          </div>
+        </div>
+
+        <!-- WEIGHT CURVE CHART -->
+        <div class="chart-block">
+          <div class="section-label">٦ · منحنى نزول الوزن · Weight Loss Curve</div>
+          <p class="card-subtitle" id="chartSubtitle">
+            سيظهر المخطط بعد إدخال وزنك الحالي والوزن المستهدف وحساب الخطة.
+          </p>
+          <div class="chart-wrapper">
+            <canvas id="weightChart"></canvas>
+          </div>
+        </div>
+
+        <div style="margin-top: 8px;">
+          <div class="section-label">٦ · ملامح الخطة اليومية · Daily Plan Snapshot</div>
+          <div class="section-label">٧ · ملامح الخطة اليومية · Daily Plan Snapshot</div>
+          <ul class="plan-list" id="dailyPlanList">
+            <li>
+              سيتم اقتراح توزيع عام للوجبات (وجبات رئيسية + سناك) بعد إدخال بياناتك.
+@@ -1007,6 +1028,9 @@
+    </main>
+  </div>
+
+  <!-- مكتبة الرسم البياني -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const body = document.body;
+@@ -1130,6 +1154,99 @@
+      const carbInfoEl = document.getElementById("carbInfo");
+      const dailyPlanListEl = document.getElementById("dailyPlanList");
+
+      const chartSubtitle = document.getElementById("chartSubtitle");
+      const weightChartCanvas = document.getElementById("weightChart");
+      let weightChart = null;
+
+      function updateWeightChart(currentWeight, targetWeight, weeks) {
+        if (!targetWeight || targetWeight >= currentWeight || weeks <= 0) {
+          chartSubtitle.textContent =
+            "أدخل وزنًا مستهدفًا أقل من وزنك الحالي لحساب منحنى نزول الوزن.";
+          if (weightChart) {
+            weightChart.destroy();
+            weightChart = null;
+          }
+          return;
+        }
+
+        const maxPoints = 20;
+        const steps = Math.min(Math.max(2, Math.ceil(weeks)), maxPoints - 1);
+        const stepSize = weeks / steps;
+
+        const labels = [];
+        const data = [];
+
+        for (let i = 0; i <= steps; i++) {
+          const w = currentWeight - (currentWeight - targetWeight) * (i / steps);
+          const weekNumber = (stepSize * i).toFixed(1);
+          labels.push(i === 0 ? "الآن · Now" : `أسبوع ${weekNumber}`);
+          data.push(parseFloat(w.toFixed(1)));
+        }
+
+        const ctx = weightChartCanvas.getContext("2d");
+        if (weightChart) {
+          weightChart.destroy();
+        }
+
+        weightChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "مسار الوزن (كجم) · Weight (kg)",
+                data,
+                tension: 0.35,
+                borderWidth: 2,
+                borderColor: "#22c55e",
+                backgroundColor: "rgba(34, 197, 94, 0.15)",
+                pointRadius: 3,
+                pointHoverRadius: 4,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                ticks: {
+                  maxRotation: 0,
+                  font: { size: 9 },
+                },
+                grid: {
+                  display: false,
+                },
+              },
+              y: {
+                ticks: {
+                  font: { size: 9 },
+                },
+                beginAtZero: false,
+                grid: {
+                  color: "rgba(148, 163, 184, 0.25)",
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                display: false,
+              },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) =>
+                    `الوزن: ${ctx.parsed.y} كجم · Week: ${ctx.label}`,
+                },
+              },
+            },
+          },
+        });
+
+        chartSubtitle.textContent =
+          "المنحنى يوضح مسار نزول الوزن من وزنك الحالي إلى الوزن المستهدف بالأسابيع.";
+      }
+
+      plannerForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+@@ -1189,9 +1306,10 @@
+            : "0 كجم/أسبوع";
+
+        // Time to goal
+        let weeks = 0;
+        if (targetWeight && targetWeight < weight && realWeeklyLossKg > 0) {
+          const kilosToLose = weight - targetWeight;
+          const weeks = kilosToLose / realWeeklyLossKg;
+          weeks = kilosToLose / realWeeklyLossKg;
+          const weeksRounded = weeks.toFixed(1);
+          const months = (weeks / 4.3).toFixed(1);
+          timeToGoalEl.textContent =
+@@ -1205,6 +1323,13 @@
+            "أضف وزنًا مستهدفًا للحصول على تقدير لمدة الوصول للهدف.";
+        }
+
+        // تحديث منحنى نزول الوزن
+        if (weeks > 0) {
+          updateWeightChart(weight, targetWeight, weeks);
+        } else {
+          updateWeightChart(weight, NaN, 0);
+        }
+
+        // Plan style
+        let planStyle = "";
+        let planHint = "";
